@@ -13,6 +13,10 @@
 	<url>http://maven.apache.org</url>
 	<dependencies>
 		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-core</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.mchange</groupId>
 			<artifactId>c3p0</artifactId>
 		</dependency>
