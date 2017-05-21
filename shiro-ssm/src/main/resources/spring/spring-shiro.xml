@@ -74,7 +74,11 @@
 	</bean>
 
 	<!-- 定义本次要使用的Realm -->
-	<bean id="memberRealm" class="cn.mldn.shiro.realm.MemberRealm" />
+	<bean id="memberRealm" class="cn.mldn.shiro.realm.MemberRealm" >
+		<property name="credentialsMatcher">
+			<bean class="cn.mldn.shiro.realm.cre.DefaultCredentialsMatcher"/>
+		</property>
+	</bean>
 	
 	<!-- Shiro中的所有验证的配置处理都应该交给SecurityManager，由于不是WEB与Shiro整合，所以所有的配置项必须由用户自己处理 -->
 	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">

@@ -20,6 +20,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 
 import cn.mldn.shiro.service.IMemberService;
 import cn.mldn.shiro.vo.Member;
+import cn.mldn.util.enctype.PasswordUtil;
 
 public class MemberRealm extends AuthorizingRealm {
 	@Resource
@@ -29,16 +30,14 @@ public class MemberRealm extends AuthorizingRealm {
 			AuthenticationToken token) throws AuthenticationException {
 		System.out.println("============== 1、进行认证操作处理 ==============");
 		String userid = token.getPrincipal().toString(); // 用户名
-		// 定义需要进行返回的操作数据信息项
-		SimpleAuthenticationInfo auth = new SimpleAuthenticationInfo(
-				token.getPrincipal(), token.getCredentials(), "memberRealm");
+		
 		// 取得用户名之后就需要通过业务层获取用户对象以确定改用户名是否可用
 		Member member = memberService.get(userid); // 通过用户名获取用户信息
 		if (member == null) { // 表示该用户信息不存在，不存在则应该抛出一个异常
 			throw new UnknownAccountException("搞什么搞，用户名不存在！");
 		}
 		// 用户名如果存在了，那么就需要确定密码是否正确
-		String password = new String((char[]) token.getCredentials());
+		String password = PasswordUtil.getPassword(new String((char[]) token.getCredentials()));
 		if (!password.equals(member.getPassword())) { // 密码验证
 			throw new IncorrectCredentialsException("密码都记不住，去死吧！");
 		}
@@ -46,6 +45,9 @@ public class MemberRealm extends AuthorizingRealm {
 		if (member.getLocked().equals(1)) { // 1表示非0，非0就是true
 			throw new LockedAccountException("被锁了，求解锁去吧！");
 		}
+		
+		SimpleAuthenticationInfo auth = new SimpleAuthenticationInfo(token.getPrincipal(),password,"memberRealm");
+		
 		SecurityUtils.getSubject().getSession().setAttribute("name", "我的名字");
 		return auth;
 	}
