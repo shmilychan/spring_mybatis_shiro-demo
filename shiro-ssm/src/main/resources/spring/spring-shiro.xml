@@ -3,10 +3,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
-
-
-	
-	
 	<!-- 定义要创建的Cookie的处理模版 -->
 	<bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
 		<!-- 相当于定义在浏览器中保存的Cookie的名字 -->
@@ -74,17 +70,17 @@
 	</bean>
 
 	<!-- 定义本次要使用的Realm -->
-	<bean id="memberRealm" class="cn.mldn.shiro.realm.MemberRealm" >
+	<bean id="memberRealm" class="cn.mldn.shiro.realm.MemberRealm">
+		<!-- 定义一个认证的匹配处理类 -->
 		<property name="credentialsMatcher">
 			<bean class="cn.mldn.shiro.realm.cre.DefaultCredentialsMatcher"/>
 		</property>
 	</bean>
-	
 	<!-- Shiro中的所有验证的配置处理都应该交给SecurityManager，由于不是WEB与Shiro整合，所以所有的配置项必须由用户自己处理 -->
 	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
 		<!-- 当前使用的Realm为之前定义好的MemberRealm -->
 		<property name="realm" ref="memberRealm" />
-		<!-- 配置需要使用的session管理器 -->
+		<!-- 配置要使用的缓存组件 -->
 		<property name="cacheManager" ref="cacheManager"/>
 		<!-- 配置要使用的Session管理器 -->
 		<property name="sessionManager" ref="sessionManager"/>
@@ -100,10 +96,14 @@
 	
 	<!-- 定义一个内置的自定义登录控制过滤器 -->
 	<bean id="formAuthenticationFilter"
-		class="org.apache.shiro.web.filter.authc.FormAuthenticationFilter">
+		class="cn.mldn.shiro.realm.filter.DefaultFormAuthenticationFilter">
 		<property name="usernameParam" value="mid" />	<!-- 登录的用户名为mid -->
 		<property name="passwordParam" value="password" />	<!-- 不改的默认参数名称就是password -->
-		<property name="rememberMeParam" value="rememberMe"/><!-- 记住我功能，默认为rememberMe -->
+		<property name="rememberMeParam" value="rememberme"/>
+		<!-- 定义生成的验证码取得session属性名称 -->
+		<property name="randname" value="rand"/>
+		<!-- 表单输入的验证码的参数名称 -->
+		<property name="randparam" value="code"/>
 		<!-- 描述的是你登录页面的执行路径，登录页面通过loginPage.action控制 -->
 		<property name="loginUrl" value="/login.jsp" />
 		<!-- 此时明确的表示要配置的是登录失败的属性的名称定义 -->
@@ -118,7 +118,7 @@
 		<!-- 如果授权出现了错误则跳转到此路径之中 -->
 		<property name="unauthorizedUrl" value="/unauth.jsp" />
 		<!-- 描述的是登录成功后的跳转页 -->
-		<property name="successUrl" value="/pages/welcome.jsp" />
+		<property name="successUrl" value="/pages/abc.jsp" />
 		<!-- 如果现在要修改内置的过滤器操作，就必须配置好新的过滤规则 -->
 		<property name="filters">
 			<map>
