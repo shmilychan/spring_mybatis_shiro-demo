@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -45,6 +46,7 @@ public class MemberRealm extends AuthorizingRealm {
 		if (member.getLocked().equals(1)) { // 1表示非0，非0就是true
 			throw new LockedAccountException("被锁了，求解锁去吧！");
 		}
+		SecurityUtils.getSubject().getSession().setAttribute("name", "我的名字");
 		return auth;
 	}
 	@Override
