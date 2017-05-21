@@ -17,18 +17,19 @@
 %>
 <%
 	String obj = (String) request.getAttribute("error") ;
-if (obj != null) {
-	if (obj.contains("UnknownAccountException")) {
+	if (obj != null) {
+		if (obj.contains("UnknownAccountException")) {
 %>
 		该账户不存在！
 <%
+		}
 	}
-}
 %>
 <h1><%=obj%></h1>
 <form action="<%=LOGIN_URL%>" method="post">
 	用户名：<input type="text" name="mid" id="mid"><br>
 	密&nbsp;码：<input type="password" name="password" id="password"><br>
+	<input type="checkbox" name="rememberMe" value="true">记住密码<br>
 	<input type="submit" value="登录">
 </form>
 </shiro:notAuthenticated>

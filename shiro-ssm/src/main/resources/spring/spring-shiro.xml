@@ -6,6 +6,23 @@
 
 
 	
+	
+	<!-- 定义要创建的Cookie的处理模版 -->
+	<bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+		<!-- 相当于定义在浏览器中保存的Cookie的名字 -->
+		<property name="name" value="MLDNJava-RememberME"/>
+		<!-- 表示此数据的信息只会以http的形式发送，不会受到跨域的操作 -->
+		<property name="httpOnly" value="true"/>
+		<!-- 设置cookie操作的最大结束时间，保存十天 -->
+		<property name="maxAge" value="864000"/>
+	</bean>
+	
+	<!-- 建立一个Cookie管理RememberMe的工具类 -->
+	<bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+		<!-- RememberMe的处理管理操作需要使用到特定的Cookie配置 -->
+		<property name="cookie" ref="rememberMeCookie"/>
+	</bean>
+	
 	<!-- 实现一个Session ID的生成器，使用Java-UUID算法实现 -->
 	<bean id="sessionIdGenerator"
 		class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator" />
@@ -67,6 +84,8 @@
 		<property name="cacheManager" ref="cacheManager"/>
 		<!-- 配置要使用的Session管理器 -->
 		<property name="sessionManager" ref="sessionManager"/>
+		<!-- 定义要使用的记住我的管理器 -->
+		<property name="rememberMeManager" ref="rememberMeManager"/>
 	</bean>
 	
 	<!-- 定义内置的注销过滤器 -->
@@ -80,6 +99,7 @@
 		class="org.apache.shiro.web.filter.authc.FormAuthenticationFilter">
 		<property name="usernameParam" value="mid" />	<!-- 登录的用户名为mid -->
 		<property name="passwordParam" value="password" />	<!-- 不改的默认参数名称就是password -->
+		<property name="rememberMeParam" value="rememberMe"/><!-- 记住我功能，默认为rememberMe -->
 		<!-- 描述的是你登录页面的执行路径，登录页面通过loginPage.action控制 -->
 		<property name="loginUrl" value="/login.jsp" />
 		<!-- 此时明确的表示要配置的是登录失败的属性的名称定义 -->
@@ -94,7 +114,7 @@
 		<!-- 如果授权出现了错误则跳转到此路径之中 -->
 		<property name="unauthorizedUrl" value="/unauth.jsp" />
 		<!-- 描述的是登录成功后的跳转页 -->
-		<property name="successUrl" value="/pages/abc.jsp" />
+		<property name="successUrl" value="/pages/welcome.jsp" />
 		<!-- 如果现在要修改内置的过滤器操作，就必须配置好新的过滤规则 -->
 		<property name="filters">
 			<map>
@@ -109,7 +129,8 @@
 			<value>
 				/logout.jsp=logout
 				/login.jsp=authc
-				/pages/welcome.jsp=authc
+				/pages/welcome.jsp=user
+				/pages/info.jsp=authc
 			</value>
 		</property>
 	</bean>
